@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools >=61", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orko"
+authors = [
+    { name = "Marcelo Duarte Trevisani", email = "marceloduartetrevisani@gmail.com" },
+]
+package_dir = "src"
+description = "Project to generate recipes for conda packages"
+readme = "README.md"
+keywords = ["conda", "environment", "pyproject.toml"]
+license = { text = "Apache-2.0" }
+dynamic = ["version"]
+requires-python = ">=3.10"
+dependencies = [
+    "setuptools",
+]
+
+[project.optional-dependencies]
+testing = [
+    "pytest",
+    "pytest-xdist",
+    "pytest-cov",
+]
+
+[tool.setuptools_scm]
+write_to = "src/orko/_version.py"
+
+[tool.black]
+target-version = ["py310"]
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | \.pytest_cache
+  | _build
+  | buck-out
+  | build
+  | dist
+  | tests/data
+)/
+'''
+
+[tool.setuptools.packages.find]
+include = ["orko", "orko.*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
