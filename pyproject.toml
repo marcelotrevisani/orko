@@ -7,7 +7,6 @@ name = "orko"
 authors = [
     { name = "Marcelo Duarte Trevisani", email = "marceloduartetrevisani@gmail.com" },
 ]
-package_dir = "src"
 description = "Project to generate recipes for conda packages"
 readme = "README.md"
 keywords = ["conda", "environment", "pyproject.toml"]
@@ -23,6 +22,7 @@ testing = [
     "pytest",
     "pytest-xdist",
     "pytest-cov",
+    "pip",
 ]
 
 [tool.setuptools_scm]

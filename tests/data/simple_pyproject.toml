@@ -1,0 +1,17 @@
+[build-system]
+requires = ["orko"]
+build-backend = "orko.build_meta"
+
+[project]
+name = "orko_foo_test"
+version = "0.0.1"
+authors = [
+    { name = "Marcelo Duarte Trevisani", email = "marceloduartetrevisani@gmail.com" },
+]
+description = "Project orko test"
+keywords = ["conda", "environment", "pyproject.toml"]
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = [
+    "pytest",
+]
