@@ -1,8 +1,10 @@
-import shutil
+from orko.core.process import merge_deps, load_pyproject
 
-from pip._internal.cli.main import main
 
 def test_simple_build(tmp_pkg_folder, data_path):
-    shutil.copyfile(data_path / "simple_pyproject.toml", tmp_pkg_folder / "pyproject.toml")
-    main(["install", "-q", "build", str(tmp_pkg_folder), "--no-build-isolation"])
-    pass
+    merge_deps(load_pyproject(data_path / "simple_pyproject.toml"))
+    # shutil.copyfile(data_path / "simple_pyproject.toml", tmp_pkg_folder / "pyproject.toml")
+    # with open(tmp_pkg_folder / "pyproject.toml", "rb") as f:
+    #     p = tomli.load(f)
+    # print(p)
+    # main(["install", "-q", "build", str(tmp_pkg_folder), "--no-build-isolation"])

@@ -11,6 +11,8 @@ def tmp_pkg_folder(tmp_path):
     setup_py.write_text("from setuptools import setup\nsetup(name='orko_foo_test')")
     orko_test_dir = foo_pkg_root_dir / "orko_foo_test"
     orko_test_dir.mkdir()
+    (orko_test_dir / "__init__.py").touch()
+    (orko_test_dir / "main.py").write_text("print('Hello!')")
     return foo_pkg_root_dir
 
 @pytest.fixture

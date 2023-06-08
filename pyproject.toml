@@ -15,6 +15,9 @@ dynamic = ["version"]
 requires-python = ">=3.10"
 dependencies = [
     "setuptools",
+    "rich-click",
+    "tomli",
+    "packaging",
 ]
 
 [project.optional-dependencies]
