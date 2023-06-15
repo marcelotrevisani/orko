@@ -1,23 +1,24 @@
 import re
 
 from packaging.requirements import Requirement
-from packaging.specifiers import SpecifierSet, InvalidSpecifier
+from packaging.specifiers import InvalidSpecifier
+from packaging.specifiers import SpecifierSet
 
 
 class Dependency(Requirement):
     def __init__(
-            self,
-            pkg: str,
-            *,
-            conda_name: str = "",
-            version: str = "",
-            platform: str = "",
-            python_version: str = "",
-            markers: str = "",
+        self,
+        pkg: str,
+        *,
+        conda_name: str = "",
+        version: str = "",
+        platform: str = "",
+        python_version: str = "",
+        markers: str = "",
     ):
         pkg_parse = pkg
 
-        python_version = python_version.replace("'", "").replace("\"", "")
+        python_version = python_version.replace("'", "").replace('"', "")
         py_match = re.match(r"\s*([!=><~^]+)\s*(.*)\s*", python_version, re.DOTALL)
         if py_match:
             python_version = f"{py_match.group(1)} '{py_match.group(2)}'"
@@ -70,7 +71,6 @@ class Dependency(Requirement):
     def conda_name(self, conda_name: str):
         self._conda_name = re.sub(r"(\[.+\])", "", conda_name, re.DOTALL).strip()
 
-
     def __repr__(self) -> str:
         conda_name = ""
         if self.conda_name != self.name:
@@ -82,6 +82,3 @@ class Dependency(Requirement):
 
     def __hash__(self):
         return hash((super().__hash__(), self.conda_name))
-
-
-

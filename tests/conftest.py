@@ -15,6 +15,7 @@ def tmp_pkg_folder(tmp_path):
     (orko_test_dir / "main.py").write_text("print('Hello!')")
     return foo_pkg_root_dir
 
+
 @pytest.fixture
 def data_path():
     return Path(__file__).parent / "data"

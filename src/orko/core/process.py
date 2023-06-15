@@ -1,11 +1,8 @@
 from functools import singledispatch
 from pathlib import Path
-
-import itertools
 from typing import List
 
 import tomli
-
 from orko.core.base import Dependency
 
 
