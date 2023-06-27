@@ -18,6 +18,7 @@ dependencies = [
     "rich-click",
     "tomli",
     "packaging",
+    "grayskull",
 ]
 
 [project.optional-dependencies]

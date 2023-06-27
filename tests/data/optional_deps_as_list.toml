@@ -1,0 +1,2 @@
+[tools.orko.optional-dependencies]
+testing = ["pytest>=6.2.3; os_name=='linux'", "pytest-xdist; os_name=='linux' and python_version >= '3.7'"]

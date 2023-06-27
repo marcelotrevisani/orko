@@ -15,8 +15,10 @@ class Dependency(Requirement):
         platform: str = "",
         python_version: str = "",
         markers: str = "",
+        tag: str = "required",
     ):
         pkg_parse = pkg
+        self._tag = tag
 
         python_version = python_version.replace("'", "").replace('"', "")
         py_match = re.match(r"\s*([!=><~^]+)\s*(.*)\s*", python_version, re.DOTALL)
@@ -45,6 +47,10 @@ class Dependency(Requirement):
 
         super().__init__(pkg_parse)
         self.conda_name = conda_name.strip() or self.name
+
+    @property
+    def tag(self) -> str:
+        return self._tag
 
     def _get_python_version_marker(self, python_version: str):
         if not python_version:
@@ -75,10 +81,14 @@ class Dependency(Requirement):
         conda_name = ""
         if self.conda_name != self.name:
             conda_name = f"({self.conda_name})"
-        return f"<Dependency {conda_name} {self}>"
+        return f"<Dependency[{self.tag}] {conda_name} {self}>"
 
     def __eq__(self, other: "Dependency"):
-        return super().__eq__(other) and other.conda_name == self.conda_name
+        return (
+            super().__eq__(other)
+            and other.conda_name == self.conda_name
+            and other.tag == self.tag
+        )
 
     def __hash__(self):
-        return hash((super().__hash__(), self.conda_name))
+        return hash((super().__hash__(), self.conda_name, self.tag))

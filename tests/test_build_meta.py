@@ -1,3 +1,4 @@
+import pytest
 from orko.core.base import Dependency
 from orko.core.process import get_deps
 from orko.core.process import load_pyproject
@@ -45,3 +46,15 @@ def test_dep_with_optional_pkg(data_path):
             "setuptools-scm[toml]", conda_name="setuptools-scm", version=">=6.2.3"
         )
     ]
+
+
+@pytest.mark.parametrize(
+    "toml_file", ("optional_deps_as_dict.toml", "optional_deps_as_list.toml")
+)
+def test_get_optional_deps(data_path, toml_file):
+    required_deps, optional_deps = get_deps(load_pyproject(data_path / toml_file))
+    assert required_deps == []
+    assert set(optional_deps) == {
+        Dependency("pytest", platform="linux", version=">=6.2.3"),
+        Dependency("pytest-xdist", platform="linux", python_version=">=3.7"),
+    }
