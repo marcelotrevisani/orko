@@ -38,10 +38,7 @@ def get_deps(
     else:
         project_deps = extract_specific_deps(pyproject, ["project", "dependencies"])
 
-    if optional_deps_sections is not None and len(optional_deps_sections) > 0:
-        opt_deps_project_sections = optional_deps_sections or []
-        opt_deps_orko_sections = optional_deps_sections or []
-    else:
+    if optional_deps_sections == "*":
         opt_deps_project_sections = list(
             pyproject.get("project", {}).get("optional-dependencies", {}).keys()
         )
@@ -51,6 +48,9 @@ def get_deps(
             .get("optional-dependencies", {})
             .keys()
         )
+    else:
+        opt_deps_project_sections = optional_deps_sections or []
+        opt_deps_orko_sections = optional_deps_sections or []
 
     all_opt_deps = []
     if not is_strict_orko:
