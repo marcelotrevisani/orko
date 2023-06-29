@@ -3,26 +3,22 @@ from pathlib import Path
 
 
 def create_conda_env(
-    env_name: str,
+    env_file: str | Path,
     *,
     conda_bin: str | Path = "conda",
     conda_options: str = "",
-    list_deps: list[str] | None = None,
-    conda_channels: list[str] | None = None,
 ):
-    list_deps = list_deps or []
-    channels_cmd = "-c ".join(conda_channels) if conda_channels else ""
+    conda_cmd = [
+        str(conda_bin),
+        "env",
+        "create",
+        "-f",
+        str(env_file),
+    ]
+    if conda_options:
+        conda_cmd.append(conda_options)
     subprocess.run(
-        [
-            str(conda_bin),
-            "env",
-            "create",
-            "-n",
-            env_name,
-            " ".join(list_deps),
-            channels_cmd,
-            conda_options,
-        ],
+        " ".join(conda_cmd),
         shell=True,
         check=True,
     )

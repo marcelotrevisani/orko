@@ -34,3 +34,4 @@ def test_create_using_fields_parameters():
     assert dep.conda_name == "pytest-conda"
     assert str(dep.specifier) == "<=5.2.3,>3.0.0"
     assert str(dep.marker) == 'os_name == "osx" and python_version == "3.10"'
+    assert dep.conda_dep_style == "pytest-conda  # [osx and ((py==310))]"

@@ -1,4 +1,7 @@
+import tempfile
+
 import rich_click as click
+import yaml
 from orko.core.env import create_conda_env
 from orko.core.process import get_deps
 from orko.core.process import load_pyproject
@@ -9,7 +12,6 @@ from orko.core.process import load_pyproject
     "pyproject_file",
     type=click.Path(),
     required=True,
-    help="Path to the pyproject.toml file.",
 )
 @click.option("--name", "-n", type=str, required=True, help="Environment name")
 @click.option("--channels", "-c", multiple=True, help="Conda channels to use")
@@ -40,14 +42,25 @@ from orko.core.process import load_pyproject
 def cli_create_env(
     pyproject_file, name, channels, add_deps, verbose, tags, conda_bin, extra_args_conda
 ):
+    """CLI to create environments looking for pyproject.toml"""
     # TODO: Need to add the verbose action which is going to control the logging level
     add_deps = add_deps or []
     pyproject = load_pyproject(pyproject_file)
     req_deps, opt_deps = get_deps(pyproject, tags)
-    create_conda_env(
-        name,
-        conda_bin=conda_bin,
-        conda_options=extra_args_conda,
-        list_deps=add_deps + req_deps + opt_deps,
-        conda_channels=channels,
-    )
+    all_deps = [d.conda_dep_style for d in req_deps + opt_deps if d]
+
+    env_content = {
+        "name": name,
+    }
+    if channels:
+        env_content["channels"] = [channels] if isinstance(channels, str) else channels
+    env_content["dependencies"] = all_deps
+
+    with tempfile.NamedTemporaryFile(prefix="environment-", suffix=".yml") as env_file:
+        env_file.write(yaml.dump(env_content).encode("utf-8"))
+        env_file.flush()
+        create_conda_env(
+            env_file.name,
+            conda_bin=conda_bin,
+            conda_options=extra_args_conda,
+        )

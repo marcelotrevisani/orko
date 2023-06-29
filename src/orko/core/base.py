@@ -92,3 +92,31 @@ class Dependency(Requirement):
 
     def __hash__(self):
         return hash((super().__hash__(), self.conda_name, self.tag))
+
+    @property
+    def conda_dep_style(self):
+        conda_pkg = self.conda_name
+        if self.marker:
+            conda_pkg += f"  # [{self._get_markers_in_conda_style()}]"
+        return conda_pkg
+
+    def _get_markers_in_conda_style(self, list_markers: list | None = None):
+        list_markers = list_markers or self.marker._markers
+        result = []
+        for mk in list_markers:
+            if isinstance(mk, tuple):
+                if mk[0].value == "os_name":
+                    if mk[1].value == "==":
+                        result.append(mk[2].value)
+                    elif mk[1].value == "!=":
+                        result.append(f"(not {mk[2].value})")
+                elif mk[0].value == "python_version":
+                    py_version = re.sub(r"[\.\'\"]+", "", mk[2].value)
+                    result.append(f"(py{mk[1].value}{py_version})")
+                else:
+                    result.append(mk)
+            elif isinstance(mk, str):
+                result.append(mk)
+            elif isinstance(mk, list):
+                result.append(f"({self._get_markers_in_conda_style(mk)})")
+        return " ".join(result)

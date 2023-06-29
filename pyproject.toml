@@ -18,8 +18,11 @@ dependencies = [
     "rich-click",
     "tomli",
     "packaging",
-    "grayskull",
+    "pyyaml",
 ]
+
+[project.scripts]
+orko = "orko.cli:cli_create_env"
 
 [project.optional-dependencies]
 testing = [
@@ -27,6 +30,9 @@ testing = [
     "pytest-xdist",
     "pytest-cov",
     "pip",
+]
+dev = [
+    "pre-commit",
 ]
 
 [tool.setuptools_scm]
@@ -53,6 +59,7 @@ exclude = '''
 
 [tool.setuptools.packages.find]
 include = ["orko", "orko.*"]
+where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
