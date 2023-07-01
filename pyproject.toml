@@ -7,7 +7,6 @@ name = "orko"
 authors = [
     { name = "Marcelo Duarte Trevisani", email = "marceloduartetrevisani@gmail.com" },
 ]
-package_dir = "src"
 description = "Project to generate recipes for conda packages"
 readme = "README.md"
 keywords = ["conda", "environment", "pyproject.toml"]
@@ -16,13 +15,24 @@ dynamic = ["version"]
 requires-python = ">=3.10"
 dependencies = [
     "setuptools",
+    "rich-click",
+    "tomli",
+    "packaging",
+    "pyyaml",
 ]
+
+[project.scripts]
+orko = "orko.cli:cli_create_env"
 
 [project.optional-dependencies]
 testing = [
     "pytest",
     "pytest-xdist",
     "pytest-cov",
+    "pip",
+]
+dev = [
+    "pre-commit",
 ]
 
 [tool.setuptools_scm]
@@ -49,7 +59,7 @@ exclude = '''
 
 [tool.setuptools.packages.find]
 include = ["orko", "orko.*"]
+where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-

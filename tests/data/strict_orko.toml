@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orko_foo_test"
+version = "0.0.1"
+authors = [
+    { name = "Marcelo Duarte Trevisani", email = "marceloduartetrevisani@gmail.com" },
+]
+description = "Project orko test"
+keywords = ["conda", "environment", "pyproject.toml"]
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = [
+    "pytest",
+    "pytest-xdist >=1.0.0,<2.0.0; python_version >= '3.7'"
+]
+
+[tools.orko.config]
+channels = ["conda-forge", "default"]
+python_build = "3.10"
+strict_orko = true
+
+[tools.orko.dependencies]
+requests = {version=">=2.23.0", python_version=">= '3.7'", platform = "linux"}
+graphviz = {conda_name="python-graphviz", python_version=">=3.7"}
+numba = {python_version="> 3.10"}
+pytest-xdist = [
+    {platform="linux", version=">=1.0.0"},
+    {platform="osx", version=">=1.0.0, <2.0.0"}
+]
