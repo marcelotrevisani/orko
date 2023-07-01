@@ -100,7 +100,9 @@ def cli_create_env(
     env_content["dependencies"] = all_deps
 
     with tempfile.NamedTemporaryFile(prefix="environment-", suffix=".yml") as env_file:
-        env_file.write(yaml.dump(env_content).encode("utf-8"))
+        yaml_env = yaml.dump(env_content).encode("utf-8")
+        LOGGER.debug(f"environment.yaml:\n{yaml_env}")
+        env_file.write(yaml_env)
         env_file.flush()
         create_conda_env(
             env_file.name,

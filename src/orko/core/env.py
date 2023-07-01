@@ -1,3 +1,4 @@
+import logging
 import subprocess
 from pathlib import Path
 
@@ -17,8 +18,10 @@ def create_conda_env(
     ]
     if conda_options:
         conda_cmd.append(conda_options)
+    flat_cmd = " ".join(conda_cmd)
+    logging.info(f"Conda create env command:\n{flat_cmd}")
     subprocess.run(
-        " ".join(conda_cmd),
+        flat_cmd,
         shell=True,
         check=True,
     )
@@ -32,4 +35,5 @@ def run_conda_build(
     req_run: list[str] | None = None,
     requires_test: list[str] | None = None,
 ):
+    # TODO: add option to run conda build as well
     pass

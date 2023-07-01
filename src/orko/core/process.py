@@ -1,3 +1,4 @@
+import logging
 from functools import singledispatch
 from pathlib import Path
 from typing import List
@@ -20,6 +21,7 @@ def extract_specific_deps(
             all_deps.extend(convert_to_dependency_obj(dep))
     else:
         all_deps.extend(convert_to_dependency_obj(group_project))
+    logging.debug(f"Extracted dependencies from {'.'.join(path_key)}: {all_deps}")
     return all_deps
 
 
@@ -31,12 +33,16 @@ def replace_deps_with_orko_if_duplicated(
         find_pkg = False
         for orko_pkg in orko_deps:
             if project_pkg.name == orko_pkg.name:
+                logging.info(f"Replacing {project_pkg.name} with {orko_pkg.name}")
                 normalised_deps.append(orko_pkg)
                 find_pkg = True
         if not find_pkg:
             normalised_deps.append(project_pkg)
-
-    return list(set(normalised_deps))
+    normalised_deps = list(set(normalised_deps))
+    logging.debug(
+        f"Dependency replace. Old: {project_deps}, Replaced by: {normalised_deps}"
+    )
+    return normalised_deps
 
 
 def get_deps(
@@ -58,6 +64,7 @@ def get_deps(
         if not merge_deps:
             project_deps = replace_deps_with_orko_if_duplicated(project_deps, orko_deps)
 
+    logging.debug(f"[project] deps: {project_deps}")
     if optional_deps_sections == "*" or "*" in optional_deps_sections:
         opt_deps_project_sections = list(
             pyproject.get("project", {}).get("optional-dependencies", {}).keys()
@@ -88,7 +95,8 @@ def get_deps(
                 pyproject, ["tools", "orko", "optional-dependencies", k]
             )
         )
-
+    logging.debug(f"[orko.optional-dependencies]: {all_opt_deps_orko}")
+    logging.debug(f"[project.optional-dependencies]: {all_opt_deps_project}")
     all_opt_deps = all_opt_deps_orko
     if merge_deps:
         all_opt_deps.extend(all_opt_deps_project)
@@ -98,8 +106,10 @@ def get_deps(
                 all_opt_deps_project, all_opt_deps_orko
             )
         )
-
-    return project_deps + orko_deps, all_opt_deps
+    logging.debug(f"Optional dependencies to install: {all_opt_deps}")
+    all_required_deps = project_deps + orko_deps
+    logging.debug(f"Required deps to install: {all_required_deps}")
+    return all_required_deps, all_opt_deps
 
 
 def load_pyproject(pyproject_path: str | Path = "pyproject.toml"):
