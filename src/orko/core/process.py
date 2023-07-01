@@ -23,8 +23,26 @@ def extract_specific_deps(
     return all_deps
 
 
+def replace_deps_with_orko_if_duplicated(
+    project_deps: List[Dependency], orko_deps: List[Dependency]
+) -> List[Dependency]:
+    normalised_deps = []
+    for project_pkg in project_deps:
+        find_pkg = False
+        for orko_pkg in orko_deps:
+            if project_pkg.name == orko_pkg.name:
+                normalised_deps.append(orko_pkg)
+                find_pkg = True
+        if not find_pkg:
+            normalised_deps.append(project_pkg)
+
+    return list(set(normalised_deps))
+
+
 def get_deps(
-    pyproject: dict, optional_deps_sections: list[str] | None = None
+    pyproject: dict,
+    optional_deps_sections: list[str] | str = "",
+    merge_deps: bool = False,
 ) -> tuple[list[Dependency], list[Dependency]]:
     is_strict_orko = (
         pyproject.get("tools", {})
@@ -37,8 +55,10 @@ def get_deps(
         project_deps = []
     else:
         project_deps = extract_specific_deps(pyproject, ["project", "dependencies"])
+        if not merge_deps:
+            project_deps = replace_deps_with_orko_if_duplicated(project_deps, orko_deps)
 
-    if optional_deps_sections == "*":
+    if optional_deps_sections == "*" or "*" in optional_deps_sections:
         opt_deps_project_sections = list(
             pyproject.get("project", {}).get("optional-dependencies", {}).keys()
         )
@@ -52,19 +72,30 @@ def get_deps(
         opt_deps_project_sections = optional_deps_sections or []
         opt_deps_orko_sections = optional_deps_sections or []
 
-    all_opt_deps = []
+    all_opt_deps_project = []
     if not is_strict_orko:
         for k in opt_deps_project_sections:
-            all_opt_deps.extend(
+            all_opt_deps_project.extend(
                 extract_specific_deps(
                     pyproject, ["project", "optional-dependencies", k]
                 )
             )
 
+    all_opt_deps_orko = []
     for k in opt_deps_orko_sections:
-        all_opt_deps.extend(
+        all_opt_deps_orko.extend(
             extract_specific_deps(
                 pyproject, ["tools", "orko", "optional-dependencies", k]
+            )
+        )
+
+    all_opt_deps = all_opt_deps_orko
+    if merge_deps:
+        all_opt_deps.extend(all_opt_deps_project)
+    else:
+        all_opt_deps.extend(
+            replace_deps_with_orko_if_duplicated(
+                all_opt_deps_project, all_opt_deps_orko
             )
         )
 

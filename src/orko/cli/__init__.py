@@ -1,3 +1,4 @@
+import logging
 import tempfile
 
 import rich_click as click
@@ -6,6 +7,9 @@ from orko.core.base import Dependency
 from orko.core.env import create_conda_env
 from orko.core.process import get_deps
 from orko.core.process import load_pyproject
+
+
+LOGGER = logging.getLogger(__name__)
 
 
 @click.command(name="create")
@@ -22,7 +26,7 @@ from orko.core.process import load_pyproject
     multiple=True,
     help="Add new dependencies when creating the environment",
 )
-@click.option("--verbose", "-v", count=True, help="Verbose mode.")
+@click.option("--verbose", "-v", count=True, help="Verbose mode.", default=0)
 @click.option(
     "--optional",
     "-o",
@@ -50,6 +54,16 @@ from orko.core.process import load_pyproject
     default=False,
     show_default=True,
 )
+@click.option(
+    "--merge-deps",
+    help="The default behaviour is to replace any dependency in [project]"
+    " with the dependency specified in orko. If this flag is active"
+    " orko is going to add all deps in project and in orko.",
+    is_flag=True,
+    default=False,
+    show_default=False,
+    required=False,
+)
 def cli_create_env(
     pyproject_file,
     name,
@@ -60,13 +74,15 @@ def cli_create_env(
     conda_bin,
     extra_args_conda,
     add_build_deps,
+    merge_deps,
 ):
     """CLI to create environments looking for pyproject.toml"""
-    # TODO: Need to add the verbose action which is going to control the logging level
+    set_logging_level(verbose)
+
     add_deps = add_deps or []
     add_deps = [Dependency(d) for d in add_deps if d]
     pyproject = load_pyproject(pyproject_file)
-    req_deps, opt_deps = get_deps(pyproject, optional)
+    req_deps, opt_deps = get_deps(pyproject, optional, merge_deps=merge_deps)
     if requires_python := pyproject.get("projecy", {}).get("requires-python", None):
         req_deps.append(Dependency("python", version=requires_python))
 
@@ -91,3 +107,15 @@ def cli_create_env(
             conda_bin=conda_bin,
             conda_options=extra_args_conda,
         )
+
+
+def set_logging_level(verbose):
+    match verbose:
+        case 1:
+            LOGGER.setLevel(logging.INFO)
+        case 2:
+            LOGGER.setLevel(logging.ERROR)
+        case _ if verbose >= 3:
+            LOGGER.setLevel(logging.CRITICAL)
+        case _:
+            LOGGER.setLevel(logging.NOTSET)

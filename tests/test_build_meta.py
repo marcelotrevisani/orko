@@ -6,7 +6,7 @@ from orko.core.process import load_pyproject
 
 def test_simple_build(tmp_pkg_folder, data_path):
     required_deps, optional_deps = get_deps(
-        load_pyproject(data_path / "simple_pyproject.toml")
+        load_pyproject(data_path / "simple_pyproject.toml"), merge_deps=True
     )
     assert set(required_deps) == {
         Dependency("pytest"),
@@ -52,7 +52,9 @@ def test_dep_with_optional_pkg(data_path):
     "toml_file", ("optional_deps_as_dict.toml", "optional_deps_as_list.toml")
 )
 def test_get_optional_deps(data_path, toml_file):
-    required_deps, optional_deps = get_deps(load_pyproject(data_path / toml_file))
+    required_deps, optional_deps = get_deps(
+        load_pyproject(data_path / toml_file), optional_deps_sections="*"
+    )
     assert required_deps == []
     assert set(optional_deps) == {
         Dependency("pytest", platform="linux", version=">=6.2.3"),
