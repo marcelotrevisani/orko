@@ -19,10 +19,12 @@ dependencies = [
     "tomli",
     "packaging",
     "pyyaml",
+    "grayskull",
+    "conda-souschef"
 ]
 
 [project.scripts]
-orko = "orko.cli:cli_create_env"
+orko = "orko.cli:orko_cli"
 
 [project.optional-dependencies]
 testing = [
