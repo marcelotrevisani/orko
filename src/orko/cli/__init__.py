@@ -12,7 +12,12 @@ from orko.core.process import load_pyproject
 LOGGER = logging.getLogger(__name__)
 
 
-@click.command(name="create")
+@click.group(name="orko", help="Orko CLI")
+def orko_cli():
+    ...
+
+
+@orko_cli.command(name="create")
 @click.argument(
     "pyproject_file",
     type=click.Path(),
@@ -121,3 +126,7 @@ def set_logging_level(verbose):
             LOGGER.setLevel(logging.CRITICAL)
         case _:
             LOGGER.setLevel(logging.NOTSET)
+
+
+if __name__ == "__main__":
+    orko_cli()
