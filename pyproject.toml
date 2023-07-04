@@ -14,8 +14,8 @@ license = { text = "Apache-2.0" }
 dynamic = ["version"]
 requires-python = ">=3.10"
 dependencies = [
-    "setuptools",
     "rich-click",
+    "click",
     "tomli",
     "packaging",
     "pyyaml",
