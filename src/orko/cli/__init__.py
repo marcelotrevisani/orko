@@ -92,9 +92,9 @@ def cli_create_env(
         req_deps.append(Dependency("python", version=requires_python))
 
     build_deps = pyproject.get("build-system", {}).get("requires", [])
+    build_deps = [Dependency(d) for d in build_deps if d]
     if add_build_deps and build_deps:
         opt_deps.extend(build_deps)
-
     all_deps = [d.conda_dep_style for d in req_deps + opt_deps + add_deps if d]
 
     env_content = {
