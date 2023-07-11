@@ -28,7 +28,7 @@ orko = "orko.cli:orko_cli"
 [project.optional-dependencies]
 testing = [
     "pytest",
-    "pytest-xdist",
+    "pytest-xdist[psutil]",
     "pytest-cov",
     "pip",
 ]
