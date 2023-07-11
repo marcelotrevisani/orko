@@ -5,7 +5,8 @@ import rich_click as click
 import yaml
 from orko.core.base import Dependency
 from orko.core.env import create_conda_env
-from orko.core.process import get_deps
+from orko.core.process import get_all_build_deps
+from orko.core.process import get_run_deps
 from orko.core.process import load_pyproject
 
 
@@ -87,15 +88,10 @@ def cli_create_env(
     add_deps = add_deps or []
     add_deps = [Dependency(d) for d in add_deps if d]
     pyproject = load_pyproject(pyproject_file)
-    req_deps, opt_deps = get_deps(pyproject, optional, merge_deps=merge_deps)
-    if requires_python := pyproject.get("projecy", {}).get("requires-python", None):
-        req_deps.append(Dependency("python", version=requires_python))
-
-    build_deps = pyproject.get("build-system", {}).get("requires", [])
-    build_deps = [Dependency(d) for d in build_deps if d]
-    if add_build_deps and build_deps:
-        opt_deps.extend(build_deps)
-    all_deps = [d.conda_dep_style for d in req_deps + opt_deps + add_deps if d]
+    req_deps, opt_deps = get_run_deps(pyproject, optional, merge_deps=merge_deps)
+    all_build_deps = get_all_build_deps(pyproject) if add_build_deps else []
+    all_deps = req_deps + all_build_deps + opt_deps + add_deps
+    all_deps = [d.conda_dep_style for d in all_deps if d]
 
     env_content = {
         "name": name,

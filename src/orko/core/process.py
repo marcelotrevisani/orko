@@ -45,7 +45,7 @@ def replace_deps_with_orko_if_duplicated(
     return normalised_deps
 
 
-def get_deps(
+def get_run_deps(
     pyproject: dict,
     optional_deps_sections: list[str] | str = "",
     merge_deps: bool = False,
@@ -109,6 +109,10 @@ def get_deps(
     logging.debug(f"Optional dependencies to install: {all_opt_deps}")
     all_required_deps = project_deps + orko_deps
     logging.debug(f"Required deps to install: {all_required_deps}")
+
+    if requires_python := pyproject.get("project", {}).get("requires-python", None):
+        all_required_deps.append(Dependency("python", version=requires_python))
+
     return all_required_deps, all_opt_deps
 
 
@@ -133,3 +137,8 @@ def __convert_to_dependency_obj_dict(pkg: dict) -> List[Dependency]:
         else:
             result.append(Dependency(name, **params))
     return result
+
+
+def get_all_build_deps(pyproject):
+    build_deps = pyproject.get("build-system", {}).get("requires", [])
+    return [Dependency(d) for d in build_deps if d]
