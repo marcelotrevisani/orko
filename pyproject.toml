@@ -19,7 +19,6 @@ dependencies = [
     "tomli",
     "packaging",
     "pyyaml",
-    "grayskull",
     "conda-souschef"
 ]
 

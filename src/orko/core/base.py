@@ -83,6 +83,9 @@ class Dependency(Requirement):
             conda_name = f"({self.conda_name})"
         return f"<Dependency[{self.tag}] {conda_name} {self}>"
 
+    def __str__(self) -> str:
+        return f"{self.conda_name}{f'; {self.marker}' if self.marker else ''}"
+
     def __eq__(self, other: "Dependency"):
         return (
             super().__eq__(other)
