@@ -36,7 +36,7 @@ jobs:
                 -vv \
                 -n auto \
                 --color=yes \
-                --cov=./ \
+                --cov=src \
                 --cov-append \
                 --cov-report html:coverage-serial-html \
                 --cov-report xml:coverage-serial.xml \
