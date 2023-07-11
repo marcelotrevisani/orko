@@ -1,4 +1,7 @@
 [run]
+concurrency = multiprocessing
+parallel = true
+source=src/
 omit =
     .cache/*
     */tests/*
@@ -11,4 +14,4 @@ omit =
     .github/*
 
 [paths]
-source = orko/
+source = src/
