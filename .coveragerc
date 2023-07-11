@@ -1,7 +1,9 @@
 [run]
 concurrency = multiprocessing
 parallel = true
-source=src/
+relative_files = True
+
+[report]
 omit =
     .cache/*
     */tests/*
