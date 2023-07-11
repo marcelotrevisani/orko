@@ -1,0 +1,53 @@
+name: Tests
+
+on:
+  push:
+   branches:
+     - master
+  pull_request:
+    branches:
+     - "*"
+
+jobs:
+  run:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        py_ver: ["3.10", "3.11"]
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: ${{ matrix.py_ver }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.py_ver }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install .[testing]
+
+    - name: Running tests
+      shell: bash -l {0}
+      run: |
+        pytest  tests \
+                -vv \
+                -n auto \
+                --color=yes \
+                --cov=./ \
+                --cov-append \
+                --cov-report html:coverage-serial-html \
+                --cov-report xml:coverage-serial.xml \
+                --cov-config=.coveragerc \
+                --junit-xml=${{ matrix.os }}-py${{ matrix.py_ver }}.xml \
+                --junit-prefix=${{ matrix.os }}-py${{ matrix.py_ver }}
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage-serial.xml,./coverage-parallel.xml
+        directory: .
+        flags: unittests
+        name: orko-tests
