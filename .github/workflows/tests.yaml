@@ -38,8 +38,6 @@ jobs:
                 --color=yes \
                 --cov=. \
                 --cov-append \
-                --cov-report html:coverage.html \
-                --cov-report xml:coverage.xml \
                 --cov-config=.coveragerc \
                 --junit-xml=${{ matrix.os }}-py${{ matrix.py_ver }}.xml \
                 --junit-prefix=${{ matrix.os }}-py${{ matrix.py_ver }}
