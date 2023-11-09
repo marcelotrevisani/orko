@@ -7,7 +7,7 @@ name = "orko"
 authors = [
     { name = "Marcelo Duarte Trevisani", email = "marceloduartetrevisani@gmail.com" },
 ]
-description = "Project to generate recipes for conda packages"
+description = "Project to manage conda environments and dependencies."
 readme = "README.md"
 keywords = ["conda", "environment", "pyproject.toml"]
 license = { text = "Apache-2.0" }
@@ -19,7 +19,7 @@ dependencies = [
     "tomli",
     "packaging",
     "pyyaml",
-    "conda-souschef"
+    "conda-souschef",
 ]
 
 [project.scripts]
@@ -33,6 +33,7 @@ testing = [
     "pip",
 ]
 dev = [
+    "orko[testing]",
     "pre-commit",
 ]
 
