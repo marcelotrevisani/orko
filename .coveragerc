@@ -1,0 +1,19 @@
+[run]
+concurrency = multiprocessing
+parallel = true
+relative_files = True
+
+[report]
+omit =
+    .cache/*
+    */tests/*
+    docs/*
+    .pytest_cache/*
+    setup.py
+    pyproject.toml
+    _version.py
+    orko.egg-info/*
+    .github/*
+
+[paths]
+source = src/
