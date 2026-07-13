@@ -9,13 +9,11 @@ from orko.core.process import get_all_build_deps
 from orko.core.process import get_run_deps
 from orko.core.process import load_pyproject
 
-
 LOGGER = logging.getLogger(__name__)
 
 
 @click.group(name="orko", help="Orko CLI")
-def orko_cli():
-    ...
+def orko_cli(): ...
 
 
 @orko_cli.command(name="create")
